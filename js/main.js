@@ -1,7 +1,7 @@
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-const url = 'resources/main.pdf'; // Your PDF here
+const url = 'https://phileasfogg3.github.io/CV/main.pdf'; // Your PDF here
 const container = document.getElementById('pdf-container');
 
 pdfjsLib.getDocument(url).promise.then(pdf => {
