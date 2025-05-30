@@ -6,11 +6,26 @@
     <title>Testing Environment</title>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <link rel="stylesheet" href="css/main.css">
+    <link href="resources/images/icon/favicon.jpg" rel="icon">
     </head>
 
     <body>
 
         <div id="coordsBox">Loading...</div>
+
+        <div id="ui-container">
+        <label>
+            <input type="checkbox" id="invertX"/>
+            Invert Horizontal (X)
+        </label>
+        <br />
+        <label>
+            <input type="checkbox" id="invertY"/>
+            Invert Vertical (Y)
+        </label>
+        </div>
+
+
 
         <a-scene>
         <a-assets>
@@ -24,7 +39,7 @@
         <!-- Hotspots container -->
         <a-entity id="hotspot-container"></a-entity>
 
-            <a-entity id="cameraRig" id="camera" camera look-controls position="0 1.6 0" coordinate-debugger>
+            <a-entity id="cameraRig" id="camera" camera inverted-look-controls wasd-controls>
                 <a-entity id="cam"           
                 cursor="rayOrigin: mouse"
                 raycaster="objects: .clickable"
@@ -45,5 +60,7 @@
         <script src="js/roomManager.js"></script>
         <script src="js/roomData.js"></script>
         <script src="js/coordinates.js"></script>
+        <script src="js/controller.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/aframe-orbit-controls/dist/aframe-orbit-controls.min.js"></script>
     </body>
 </html>
