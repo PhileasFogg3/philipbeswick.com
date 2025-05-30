@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+    <meta charset="UTF-8" content="360&deg; Image - A-Frame">
+    <title>Testing Environment</title>
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+    </head>
+
+    <body>
+
+        <div id="coordsBox">Loading...</div>
+
+        <a-scene>
+        <a-assets>
+            <img id="point1" src="resources/images/House/point1.jpg">
+            <img id="point2" src="resources/images/House/point2.jpg">
+            <img id="point3" src="resources/images/House/point3.jpg">
+        </a-assets>
+
+        <a-sky id="sky"></a-sky>
+
+        <!-- Hotspots container -->
+        <a-entity id="hotspot-container"></a-entity>
+
+            <a-entity id="cameraRig" id="camera" camera look-controls position="0 1.6 0" coordinate-debugger>
+                <a-entity id="cam"           
+                cursor="rayOrigin: mouse"
+                raycaster="objects: .clickable"
+                position="0 0 -1"
+                geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
+                material="color: white; shader: flat">  
+            </a-entity>
+        </a-entity>
+
+        <a-entity id="raycast-target" position="0 0 0" raycast-target-setup></a-entity>
+
+        <a-sphere id="hitPoint" position="0 0 0" radius="0.2" color="lime" visible="false"></a-sphere>
+
+        <a-entity look-point-debugger></a-entity>
+
+        </a-scene>
+
+        <script src="js/roomManager.js"></script>
+        <script src="js/roomData.js"></script>
+        <script src="js/coordinates.js"></script>
+    </body>
+</html>
