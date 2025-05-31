@@ -75,7 +75,7 @@ AFRAME.registerComponent('inverted-look-controls', {
     const container = document.createElement('div');
     container.style.position = 'absolute';
     container.style.top = '10px';
-    container.style.left = '10px';
+    container.style.right = '10px';
     container.style.padding = '8px';
     container.style.background = 'rgba(0,0,0,0.6)';
     container.style.color = '#fff';
@@ -105,19 +105,35 @@ AFRAME.registerComponent('inverted-look-controls', {
     labelY.textContent = 'Invert Y';
     labelY.style.marginRight = '10px';
 
-    const gyroBtn = document.createElement('button');
-    gyroBtn.textContent = 'Enable Gyroscope';
-    gyroBtn.style.marginLeft = '10px';
-    gyroBtn.onclick = () => {
-      this.data.gyroscopeEnabled = true;
-      window.addEventListener('deviceorientation', this.deviceOrientationHandler, true);
-    };
+    const gyroCheckbox = document.createElement('input');
+    gyroCheckbox.type = 'checkbox';
+    gyroCheckbox.id = 'enableGyro';
+    gyroCheckbox.style.marginLeft = '10px';
+
+    gyroCheckbox.addEventListener('change', () => {
+    this.data.gyroscopeEnabled = gyroCheckbox.checked;
+
+    if (gyroCheckbox.checked) {
+        console.log('[Gyro] Enabled: Adding deviceorientation listener');
+        window.addEventListener('deviceorientation', this.deviceOrientationHandler, true);
+    } else {
+        console.log('[Gyro] Disabled: Removing deviceorientation listener');
+        window.removeEventListener('deviceorientation', this.deviceOrientationHandler, true);
+    }
+    });
+
+    const gyroLabel = document.createElement('label');
+    gyroLabel.htmlFor = 'enableGyro';
+    gyroLabel.textContent = 'Enable Gyroscope';
+    gyroLabel.style.marginLeft = '5px';
+    gyroLabel.style.marginRight = '10px';
 
     container.appendChild(invertX);
     container.appendChild(labelX);
     container.appendChild(invertY);
     container.appendChild(labelY);
-    container.appendChild(gyroBtn);
+    container.appendChild(gyroCheckbox);
+    container.appendChild(gyroLabel);
 
     document.body.appendChild(container);
   },
