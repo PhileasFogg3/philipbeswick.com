@@ -122,30 +122,49 @@ AFRAME.registerComponent('inverted-look-controls', {
     document.body.appendChild(container);
   },
 
-  delayGyroActivation: function () {
-    if (this.data.gyroscopeEnabled) {
-      setTimeout(() => {
-        window.addEventListener('deviceorientation', this.deviceOrientationHandler, true);
-      }, 500); // wait for camera and image to stabilize
-    }
-  },
+delayGyroActivation: function () {
+  if (this.data.gyroscopeEnabled) {
+    console.log('[Gyro] Waiting to activate gyroscope...');
+    setTimeout(() => {
+      console.log('[Gyro] Adding deviceorientation listener');
+      window.addEventListener('deviceorientation', this.deviceOrientationHandler, true);
+    }, 500);
+  }
+},
 
-  deviceOrientationHandler: function (event) {
-    if (!this.data.gyroscopeEnabled) return;
-    if (typeof event.alpha !== 'number' || isNaN(event.alpha)) return;
+deviceOrientationHandler: function (event) {
+  console.log('[Gyro] deviceorientation event received:', event);
 
-    const yaw = THREE.MathUtils.degToRad(event.alpha);
-    const pitch = THREE.MathUtils.degToRad(event.beta - 90);
+  if (!this.data.gyroscopeEnabled) {
+    console.log('[Gyro] Gyroscope not enabled, ignoring');
+    return;
+  }
 
-    this.el.object3D.rotation.y = yaw;
-    this.el.object3D.rotation.x = pitch;
+  if (typeof event.alpha !== 'number' || isNaN(event.alpha)) {
+    console.warn('[Gyro] Invalid orientation data: alpha is NaN');
+    return;
+  }
 
-    // Clamp pitch
-    this.el.object3D.rotation.x = Math.max(
-      -Math.PI / 2,
-      Math.min(Math.PI / 2, this.el.object3D.rotation.x)
-    );
-  },
+  // Convert to radians
+  const yaw = THREE.MathUtils.degToRad(event.alpha); // horizontal rotation
+  const pitch = THREE.MathUtils.degToRad(event.beta - 90); // vertical tilt
+
+  console.log(`[Gyro] Computed rotation - yaw: ${yaw.toFixed(2)}, pitch: ${pitch.toFixed(2)}`);
+
+  // Apply rotation
+  const rotation = this.el.object3D.rotation;
+  rotation.y = yaw;
+  rotation.x = pitch;
+
+  // Clamp pitch
+  rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotation.x));
+
+  console.log('[Gyro] Applied rotation:', {
+    rotationX: rotation.x.toFixed(2),
+    rotationY: rotation.y.toFixed(2)
+  });
+},
+
 
   onMouseDown: function (e) {
     this.mouseDown = true;
