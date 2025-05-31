@@ -12,22 +12,16 @@ AFRAME.registerComponent('inverted-look-controls', {
     this.touching = false;
     this.lastX = 0;
     this.lastY = 0;
-    this.deviceOrientationHandler = this.deviceOrientationHandler.bind(this);
 
     this.bindMethods();
     this.addEventListeners();
 
+    // Wait for scene to fully load
     this.el.sceneEl.addEventListener('loaded', () => {
       this.addHotspotCursorListeners();
+      this.addUIControls();
+      this.delayGyroActivation(); // ensure camera/image is ready before using gyro
     });
-  },
-
-  update: function () {
-    if (this.data.gyroscopeEnabled) {
-      window.addEventListener('deviceorientation', this.deviceOrientationHandler, true);
-    } else {
-      window.removeEventListener('deviceorientation', this.deviceOrientationHandler, true);
-    }
   },
 
   bindMethods: function () {
@@ -37,6 +31,7 @@ AFRAME.registerComponent('inverted-look-controls', {
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
+    this.deviceOrientationHandler = this.deviceOrientationHandler.bind(this);
   },
 
   addEventListeners: function () {
@@ -47,6 +42,7 @@ AFRAME.registerComponent('inverted-look-controls', {
     }
 
     canvas.style.cursor = 'grab';
+
     canvas.addEventListener('mousedown', this.onMouseDown);
     window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('mouseup', this.onMouseUp);
@@ -67,18 +63,91 @@ AFRAME.registerComponent('inverted-look-controls', {
     hotspots.forEach(hotspot => {
       hotspot.style.cursor = 'pointer';
       hotspot.addEventListener('mouseenter', () => {
-        const canvas = this.el.sceneEl.canvas;
-        if (canvas) canvas.style.cursor = 'pointer';
+        this.el.sceneEl.canvas.style.cursor = 'pointer';
       });
       hotspot.addEventListener('mouseleave', () => {
-        const canvas = this.el.sceneEl.canvas;
-        if (canvas) canvas.style.cursor = this.mouseDown ? 'grabbing' : 'grab';
+        this.el.sceneEl.canvas.style.cursor = this.mouseDown ? 'grabbing' : 'grab';
       });
     });
   },
 
+  addUIControls: function () {
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.top = '10px';
+    container.style.left = '10px';
+    container.style.padding = '8px';
+    container.style.background = 'rgba(0,0,0,0.6)';
+    container.style.color = '#fff';
+    container.style.zIndex = '999';
+
+    const invertX = document.createElement('input');
+    invertX.type = 'checkbox';
+    invertX.id = 'invertX';
+    invertX.addEventListener('change', () => {
+      this.data.invertX = invertX.checked;
+    });
+
+    const labelX = document.createElement('label');
+    labelX.htmlFor = 'invertX';
+    labelX.textContent = 'Invert X';
+    labelX.style.marginRight = '10px';
+
+    const invertY = document.createElement('input');
+    invertY.type = 'checkbox';
+    invertY.id = 'invertY';
+    invertY.addEventListener('change', () => {
+      this.data.invertY = invertY.checked;
+    });
+
+    const labelY = document.createElement('label');
+    labelY.htmlFor = 'invertY';
+    labelY.textContent = 'Invert Y';
+    labelY.style.marginRight = '10px';
+
+    const gyroBtn = document.createElement('button');
+    gyroBtn.textContent = 'Enable Gyroscope';
+    gyroBtn.style.marginLeft = '10px';
+    gyroBtn.onclick = () => {
+      this.data.gyroscopeEnabled = true;
+      window.addEventListener('deviceorientation', this.deviceOrientationHandler, true);
+    };
+
+    container.appendChild(invertX);
+    container.appendChild(labelX);
+    container.appendChild(invertY);
+    container.appendChild(labelY);
+    container.appendChild(gyroBtn);
+
+    document.body.appendChild(container);
+  },
+
+  delayGyroActivation: function () {
+    if (this.data.gyroscopeEnabled) {
+      setTimeout(() => {
+        window.addEventListener('deviceorientation', this.deviceOrientationHandler, true);
+      }, 500); // wait for camera and image to stabilize
+    }
+  },
+
+  deviceOrientationHandler: function (event) {
+    if (!this.data.gyroscopeEnabled) return;
+    if (typeof event.alpha !== 'number' || isNaN(event.alpha)) return;
+
+    const yaw = THREE.MathUtils.degToRad(event.alpha);
+    const pitch = THREE.MathUtils.degToRad(event.beta - 90);
+
+    this.el.object3D.rotation.y = yaw;
+    this.el.object3D.rotation.x = pitch;
+
+    // Clamp pitch
+    this.el.object3D.rotation.x = Math.max(
+      -Math.PI / 2,
+      Math.min(Math.PI / 2, this.el.object3D.rotation.x)
+    );
+  },
+
   onMouseDown: function (e) {
-    if (this.data.gyroscopeEnabled) return;
     this.mouseDown = true;
     this.lastX = e.clientX;
     this.lastY = e.clientY;
@@ -86,10 +155,13 @@ AFRAME.registerComponent('inverted-look-controls', {
   },
 
   onMouseMove: function (e) {
-    if (!this.mouseDown || !this.data.enabled || this.data.gyroscopeEnabled) return;
+    if (!this.mouseDown || !this.data.enabled) return;
+
     const dx = e.clientX - this.lastX;
     const dy = e.clientY - this.lastY;
+
     this.rotate(dx, dy);
+
     this.lastX = e.clientX;
     this.lastY = e.clientY;
   },
@@ -100,19 +172,22 @@ AFRAME.registerComponent('inverted-look-controls', {
   },
 
   onTouchStart: function (e) {
-    if (!this.data.enabled || e.touches.length !== 1 || this.data.gyroscopeEnabled) return;
+    if (!this.data.enabled || e.touches.length !== 1) return;
     this.touching = true;
     this.lastX = e.touches[0].clientX;
     this.lastY = e.touches[0].clientY;
   },
 
   onTouchMove: function (e) {
-    if (!this.touching || !this.data.enabled || this.data.gyroscopeEnabled) return;
+    if (!this.touching || !this.data.enabled) return;
     e.preventDefault();
+
     const touch = e.touches[0];
     const dx = touch.clientX - this.lastX;
     const dy = touch.clientY - this.lastY;
+
     this.rotate(dx, dy);
+
     this.lastX = touch.clientX;
     this.lastY = touch.clientY;
   },
@@ -123,17 +198,14 @@ AFRAME.registerComponent('inverted-look-controls', {
 
   rotate: function (dx, dy) {
     const { invertX, invertY, sensitivity } = this.data;
+
     this.el.object3D.rotation.y += (invertX ? -1 : 1) * dx * sensitivity;
     this.el.object3D.rotation.x += (invertY ? -1 : 1) * dy * sensitivity;
-    this.el.object3D.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.el.object3D.rotation.x));
-  },
 
-  deviceOrientationHandler: function (event) {
-    if (!event.alpha || !this.data.gyroscopeEnabled) return;
-    const object3D = this.el.object3D;
-    const yaw = THREE.MathUtils.degToRad(event.alpha); // Z rotation
-    const pitch = THREE.MathUtils.degToRad(event.beta - 90); // X rotation
-    object3D.rotation.y = yaw;
-    object3D.rotation.x = pitch;
+    // Clamp pitch
+    this.el.object3D.rotation.x = Math.max(
+      -Math.PI / 2,
+      Math.min(Math.PI / 2, this.el.object3D.rotation.x)
+    );
   }
 });
