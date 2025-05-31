@@ -15,7 +15,7 @@ AFRAME.registerComponent('inverted-look-controls', {
     this.bindMethods();
     this.addEventListeners();
 
-    // Wait for scene to load so hotspots exist, then add cursor listeners to them
+    // Handle clickable hotspot hover behavior
     this.el.sceneEl.addEventListener('loaded', () => {
       this.addHotspotCursorListeners();
     });
@@ -38,7 +38,6 @@ AFRAME.registerComponent('inverted-look-controls', {
       return;
     }
 
-    // Initial cursor style
     canvas.style.cursor = 'grab';
 
     canvas.addEventListener('mousedown', this.onMouseDown);
@@ -58,22 +57,19 @@ AFRAME.registerComponent('inverted-look-controls', {
 
   addHotspotCursorListeners: function () {
     const sceneEl = this.el.sceneEl;
-    // Select all hotspots by class "hotspot" - make sure your hotspots have this class
     const hotspots = sceneEl.querySelectorAll('.clickable');
 
     hotspots.forEach(hotspot => {
-      // Set pointer cursor on hotspot itself (some browsers)
       hotspot.style.cursor = 'pointer';
 
       hotspot.addEventListener('mouseenter', () => {
         const canvas = this.el.sceneEl.canvas;
         if (canvas) canvas.style.cursor = 'pointer';
       });
+
       hotspot.addEventListener('mouseleave', () => {
         const canvas = this.el.sceneEl.canvas;
-        if (canvas) {
-          canvas.style.cursor = this.mouseDown ? 'grabbing' : 'grab';
-        }
+        if (canvas) canvas.style.cursor = this.mouseDown ? 'grabbing' : 'grab';
       });
     });
   },
