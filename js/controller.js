@@ -12,6 +12,7 @@ AFRAME.registerComponent('inverted-look-controls', {
     this.touching = false;
     this.lastX = 0;
     this.lastY = 0;
+    this.deviceOrientationControls = null;
 
     this.bindMethods();
     this.addEventListeners();
@@ -30,7 +31,6 @@ AFRAME.registerComponent('inverted-look-controls', {
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
-    this.deviceOrientationHandler = this.deviceOrientationHandler.bind(this);
   },
 
   addEventListeners: function () {
@@ -52,12 +52,16 @@ AFRAME.registerComponent('inverted-look-controls', {
     window.addEventListener('touchend', this.onTouchEnd);
 
     canvas.addEventListener('mouseleave', () => {
-      if (!this.mouseDown) canvas.style.cursor = 'default';
+      if (!this.mouseDown) {
+        canvas.style.cursor = 'default';
+      }
     });
   },
 
   addHotspotCursorListeners: function () {
-    const hotspots = this.el.sceneEl.querySelectorAll('.clickable');
+    const sceneEl = this.el.sceneEl;
+    // Make sure your hotspots have class "clickable"
+    const hotspots = sceneEl.querySelectorAll('.clickable');
 
     hotspots.forEach(hotspot => {
       hotspot.style.cursor = 'pointer';
@@ -66,7 +70,6 @@ AFRAME.registerComponent('inverted-look-controls', {
         const canvas = this.el.sceneEl.canvas;
         if (canvas) canvas.style.cursor = 'pointer';
       });
-
       hotspot.addEventListener('mouseleave', () => {
         const canvas = this.el.sceneEl.canvas;
         if (canvas) {
@@ -86,6 +89,7 @@ AFRAME.registerComponent('inverted-look-controls', {
     container.style.color = '#fff';
     container.style.zIndex = '999';
 
+    // Invert X checkbox
     const invertX = document.createElement('input');
     invertX.type = 'checkbox';
     invertX.id = 'invertX';
@@ -93,12 +97,12 @@ AFRAME.registerComponent('inverted-look-controls', {
     invertX.addEventListener('change', () => {
       this.data.invertX = invertX.checked;
     });
-
     const labelX = document.createElement('label');
     labelX.htmlFor = 'invertX';
     labelX.textContent = 'Invert X';
     labelX.style.marginRight = '10px';
 
+    // Invert Y checkbox
     const invertY = document.createElement('input');
     invertY.type = 'checkbox';
     invertY.id = 'invertY';
@@ -106,42 +110,42 @@ AFRAME.registerComponent('inverted-look-controls', {
     invertY.addEventListener('change', () => {
       this.data.invertY = invertY.checked;
     });
-
     const labelY = document.createElement('label');
     labelY.htmlFor = 'invertY';
     labelY.textContent = 'Invert Y';
     labelY.style.marginRight = '10px';
 
+    // Gyroscope checkbox
     const gyroCheckbox = document.createElement('input');
     gyroCheckbox.type = 'checkbox';
-    gyroCheckbox.id = 'enableGyro';
+    gyroCheckbox.id = 'gyroToggle';
     gyroCheckbox.checked = this.data.gyroscopeEnabled;
-    gyroCheckbox.style.marginLeft = '10px';
-
     gyroCheckbox.addEventListener('change', () => {
       this.data.gyroscopeEnabled = gyroCheckbox.checked;
 
       if (gyroCheckbox.checked) {
-        console.log('[Gyro] Enabled: Adding deviceorientation listener');
-        window.addEventListener('deviceorientation', this.deviceOrientationHandler, true);
+        console.log('[Gyro] Enabling THREE.DeviceOrientationControls');
+        this.deviceOrientationControls = new THREE.DeviceOrientationControls(this.el.object3D);
+        this.deviceOrientationControls.connect();
       } else {
-        console.log('[Gyro] Disabled: Removing deviceorientation listener');
-        window.removeEventListener('deviceorientation', this.deviceOrientationHandler, true);
+        console.log('[Gyro] Disabling gyroscope controls');
+        if (this.deviceOrientationControls) {
+          this.deviceOrientationControls.disconnect();
+          this.deviceOrientationControls = null;
+        }
       }
     });
+    const labelGyro = document.createElement('label');
+    labelGyro.htmlFor = 'gyroToggle';
+    labelGyro.textContent = 'Enable Gyroscope';
 
-    const gyroLabel = document.createElement('label');
-    gyroLabel.htmlFor = 'enableGyro';
-    gyroLabel.textContent = 'Enable Gyroscope';
-    gyroLabel.style.marginLeft = '5px';
-    gyroLabel.style.marginRight = '10px';
-
+    // Append all to container
     container.appendChild(invertX);
     container.appendChild(labelX);
     container.appendChild(invertY);
     container.appendChild(labelY);
     container.appendChild(gyroCheckbox);
-    container.appendChild(gyroLabel);
+    container.appendChild(labelGyro);
 
     document.body.appendChild(container);
   },
@@ -175,7 +179,7 @@ AFRAME.registerComponent('inverted-look-controls', {
   },
 
   onTouchStart: function (e) {
-    if (!this.data.enabled || e.touches.length !== 1 || this.data.gyroscopeEnabled) return;
+    if (!this.data.enabled || this.data.gyroscopeEnabled || e.touches.length !== 1) return;
 
     this.touching = true;
     this.lastX = e.touches[0].clientX;
@@ -207,26 +211,16 @@ AFRAME.registerComponent('inverted-look-controls', {
     this.el.object3D.rotation.y += (invertX ? -1 : 1) * dx * sensitivity;
     this.el.object3D.rotation.x += (invertY ? -1 : 1) * dy * sensitivity;
 
+    // Clamp vertical rotation so no flipping over
     this.el.object3D.rotation.x = Math.max(
       -Math.PI / 2,
       Math.min(Math.PI / 2, this.el.object3D.rotation.x)
     );
   },
 
-  deviceOrientationHandler: function (event) {
-    if (!this.data.gyroscopeEnabled) return;
-
-    const object3D = this.el.object3D;
-
-    // Convert to radians
-    let pitch = THREE.MathUtils.degToRad(event.beta);  // x-axis tilt
-    let yaw = THREE.MathUtils.degToRad(event.alpha);   // compass heading
-
-    // Clamp pitch
-    pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, pitch));
-
-    // Smooth interpolation
-    object3D.rotation.x += (pitch - object3D.rotation.x) * 0.1;
-    object3D.rotation.y += (yaw - object3D.rotation.y) * 0.1;
+  tick: function () {
+    if (this.data.gyroscopeEnabled && this.deviceOrientationControls) {
+      this.deviceOrientationControls.update();
+    }
   }
 });
