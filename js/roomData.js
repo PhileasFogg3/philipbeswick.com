@@ -7,13 +7,11 @@ const rooms = {
     rotation: [0, 270, 0],
     hotspots: [
       {
+        icon: 'resources/images/icon/360 project/arrow.png',
+        iconRotation: '90 0 0',
         position: [-413.31, -232.81, 156.52],
         targetRoom: 'room2',
         label: 'Go to Room 2'
-      },
-      {
-        position: '-2 1.5 -3',
-        info: 'This is the main entrance.'
       }
     ]
   },
@@ -25,11 +23,15 @@ const rooms = {
     rotation: [0, 300, 0],
     hotspots: [
       {
+        icon: 'resources/images/icon/360 project/arrow.png',
+        iconRotation: '-90 0 0',
         position: [360.32, -306.50, 160.57],
         targetRoom: 'room1',
         label: 'Back to Room 1'
       },
       {
+        icon: 'resources/images/icon/360 project/arrow.png',
+        iconRotation: '90 0 0',
         position: [-388.99, -229.34, -213.92],
         targetRoom: 'room3',
         label: 'Go to Room 3'
@@ -44,6 +46,8 @@ const rooms = {
     rotation: [0, 260, 0],
     hotspots: [
       {
+        icon: 'resources/images/icon/360 project/arrow.png',
+        iconRotation: '-90 0 0',
         position: [421.15, -228.36, -141.25],
         targetRoom: 'room2',
         label: 'Back to Room 2'

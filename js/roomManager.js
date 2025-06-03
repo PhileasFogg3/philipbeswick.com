@@ -77,13 +77,15 @@ function loadRoom(roomId) {
 
     // Add new hotspots for the new room
     room.hotspots.forEach(hotspot => {
-        const el = document.createElement('a-entity');
-        el.setAttribute('geometry', 'primitive: sphere; radius: 50');
-        el.setAttribute('material', 'color: blue; shader: flat');
-        el.setAttribute('position', getHotspotPosition(hotspot, room));
-        el.setAttribute('look-at', '#camera');
-        el.setAttribute('class', 'clickable');
-        el.setAttribute('rotation', '0 180 0');
+    const el = document.createElement('a-image'); // Use a-image for icon
+    el.setAttribute('src', hotspot.icon); // Set the source of your icon image
+    el.setAttribute('width', '100'); // Set the width of the icon (adjust as needed)
+    el.setAttribute('height', '100'); // Set the height of the icon (adjust as needed)
+    el.setAttribute('position', getHotspotPosition(hotspot, room));
+    el.setAttribute('look-at', '#camera');
+    el.setAttribute('class', 'clickable');
+    el.setAttribute('rotation', hotspot.iconRotation);
+    el.setAttribute('depth-test', 'false');
 
         if (hotspot.targetRoom) {
             el.setAttribute('event-set__enter', '_event: mouseenter; scale: 1.3 1.3 1');
