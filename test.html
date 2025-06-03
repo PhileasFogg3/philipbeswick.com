@@ -14,10 +14,12 @@
         <div id="coordsBox">Loading...</div>
 
         <a-scene>
-        <a-assets>
+        <a-assets id="asset-container">
+            <!--
             <img id="point1" src="resources/images/House/point1 small.jpg">
             <img id="point2" src="resources/images/House/point2 small.jpg">
             <img id="point3" src="resources/images/House/point3 small.jpg">
+            -->
         </a-assets>
 
         <a-sky id="sky"></a-sky>
@@ -43,10 +45,10 @@
 
         </a-scene>
 
-        <script src="js/roomManager.js"></script>
         <script src="js/roomData.js"></script>
-        <script src="js/coordinates.js"></script>
         <script src="js/controller.js"></script>
+        <script src="js/roomManager.js"></script>
+        <script src="js/coordinates.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/aframe-orbit-controls/dist/aframe-orbit-controls.min.js"></script>
     </body>
 </html>

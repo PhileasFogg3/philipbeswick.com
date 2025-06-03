@@ -1,5 +1,8 @@
 const rooms = {
   room1: {
+    firstRoom: true,
+    imageID: 'point1',
+    imageSrc: 'resources/images/House/point1 small.jpg',
     image: '#point1',
     rotation: [0, 270, 0],
     hotspots: [
@@ -15,6 +18,9 @@ const rooms = {
     ]
   },
   room2: {
+    firstRoom: false,
+    imageID: 'point2',
+    imageSrc: 'resources/images/House/point2 small.jpg',
     image: '#point2',
     rotation: [0, 300, 0],
     hotspots: [
@@ -30,7 +36,10 @@ const rooms = {
       }
     ]
   },
-    room3: {
+  room3: {
+    firstRoom: false,
+    imageID: 'point3',
+    imageSrc: 'resources/images/House/point3 small.jpg',
     image: '#point3',
     rotation: [0, 260, 0],
     hotspots: [
