@@ -77,11 +77,12 @@ function loadRoom(roomId) {
 
     // Add new hotspots for the new room
     room.hotspots.forEach(hotspot => {
-    const el = document.createElement('a-image'); // Use a-image for icon
-    el.setAttribute('src', hotspot.icon); // Set the source of your icon image
-    el.setAttribute('width', '100'); // Set the width of the icon (adjust as needed)
-    el.setAttribute('height', '100'); // Set the height of the icon (adjust as needed)
-    el.setAttribute('position', getHotspotPosition(hotspot, room));
+    const position = getHotspotPosition(hotspot, room); 
+    const el = document.createElement('a-image');
+    el.setAttribute('src', hotspot.icon);
+    el.setAttribute('width', hotspot.iconWidth);
+    el.setAttribute('height', hotspot.iconHeight);
+    el.setAttribute('position', position);
     el.setAttribute('look-at', '#camera');
     el.setAttribute('rotation', hotspot.iconRotation);
     el.setAttribute('depth-test', 'false');
@@ -94,7 +95,7 @@ function loadRoom(roomId) {
         }
 
         if (hotspot.info) {
-        
+            
             el.classList.add('hoverable')
         
             el.addEventListener('mouseenter', () => {
@@ -103,6 +104,16 @@ function loadRoom(roomId) {
 
             el.addEventListener('mouseleave', () => {
                 hideTextBox();    
+            });
+        }
+
+        if (hotspot.shouldBounce) {
+            el.setAttribute('animation', {
+                property: 'position',
+                dir: 'alternate',
+                dur: 500,
+                loop: true,
+                to: `${position.x} ${position.y + 5} ${position.z}`
             });
         }
 

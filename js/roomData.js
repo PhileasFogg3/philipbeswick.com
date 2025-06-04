@@ -9,16 +9,20 @@ const rooms = {
       {
         icon: 'resources/images/icon/360 project/arrow.png',
         iconRotation: '90 0 0',
+        iconHeight: '100',
+        iconWidth: '100',
         position: [-413.31, -232.81, 156.52],
         targetRoom: 'room2',
-        info: 'Go to Room 2'
+        info: 'Enter the hallway...'
       },
       {
         icon: 'resources/images/icon/360 project/info.png',
         iconRotation: '0 90 0',
+        iconHeight: '50',
+        iconWidth: '50',
         position: [-255.14, 318.62, 288.10],
-        info: 'Test text',
-        infoRotation: '0 90 0'
+        info: 'The Grand-babies <3',
+        shouldBounce: true
       }
     ]
   },
@@ -34,14 +38,14 @@ const rooms = {
         iconRotation: '-90 0 0',
         position: [360.32, -306.50, 160.57],
         targetRoom: 'room1',
-        info: 'Back to Room 1'
+        info: 'Get back in the kitchen!'
       },
       {
         icon: 'resources/images/icon/360 project/arrow.png',
         iconRotation: '90 0 0',
         position: [-388.99, -229.34, -213.92],
         targetRoom: 'room3',
-        info: 'Go to Room 3'
+        info: 'Go on then... check out the front door.'
       }
     ]
   },
@@ -57,7 +61,7 @@ const rooms = {
         iconRotation: '-90 0 0',
         position: [421.15, -228.36, -141.25],
         targetRoom: 'room2',
-        info: 'Back to Room 2'
+        info: 'Get yourself back in the hallway.'
       }
     ]
   }
