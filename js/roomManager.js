@@ -83,22 +83,32 @@ function loadRoom(roomId) {
     el.setAttribute('height', '100'); // Set the height of the icon (adjust as needed)
     el.setAttribute('position', getHotspotPosition(hotspot, room));
     el.setAttribute('look-at', '#camera');
-    el.setAttribute('class', 'clickable');
     el.setAttribute('rotation', hotspot.iconRotation);
     el.setAttribute('depth-test', 'false');
 
         if (hotspot.targetRoom) {
+            el.classList.add('clickable')
             el.setAttribute('event-set__enter', '_event: mouseenter; scale: 1.3 1.3 1');
             el.setAttribute('event-set__leave', '_event: mouseleave; scale: 1 1 1');
             el.addEventListener('click', () => loadRoom(hotspot.targetRoom));
         }
 
         if (hotspot.info) {
-            el.addEventListener('click', () => alert(hotspot.info));
+        
+            el.classList.add('hoverable')
+        
+            el.addEventListener('mouseenter', () => {
+                showTextBox(hotspot, room);
+            });
+
+            el.addEventListener('mouseleave', () => {
+                hideTextBox();    
+            });
         }
 
         container.appendChild(el);
         console.log(`Added hotspot${hotspot.targetRoom ? ` to ${hotspot.targetRoom}` : ''}`);
+        console.log(el.classList);
     });
 }
 

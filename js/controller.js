@@ -18,7 +18,7 @@ AFRAME.registerComponent('inverted-look-controls', {
     this.addEventListeners();
 
     this.el.sceneEl.addEventListener('loaded', () => {
-      this.addHotspotCursorListeners();
+      this.addInteractiveCursorListeners();
     });
 
     this.addUIControls();
@@ -58,26 +58,31 @@ AFRAME.registerComponent('inverted-look-controls', {
     });
   },
 
-  addHotspotCursorListeners: function () {
+  addInteractiveCursorListeners: function () {
     const sceneEl = this.el.sceneEl;
-    // Make sure your hotspots have class "clickable"
-    const hotspots = sceneEl.querySelectorAll('.clickable');
+    const canvas = sceneEl.canvas;
 
-    hotspots.forEach(hotspot => {
-      hotspot.style.cursor = 'pointer';
+    const interactiveEls = sceneEl.querySelectorAll('.clickable, .hoverable');
 
-      hotspot.addEventListener('mouseenter', () => {
-        const canvas = this.el.sceneEl.canvas;
+    interactiveEls.forEach(el => {
+      el.style.cursor = 'pointer';
+
+      el.addEventListener('mouseenter', () => {
         if (canvas) canvas.style.cursor = 'pointer';
+        if (el.classList.contains('hoverable')) {
+          el.classList.add('hovering');
+        }
       });
-      hotspot.addEventListener('mouseleave', () => {
-        const canvas = this.el.sceneEl.canvas;
-        if (canvas) {
-          canvas.style.cursor = this.mouseDown ? 'grabbing' : 'grab';
+
+      el.addEventListener('mouseleave', () => {
+        if (canvas) canvas.style.cursor = this.mouseDown ? 'grabbing' : 'grab';
+        if (el.classList.contains('hoverable')) {
+          el.classList.remove('hovering');
         }
       });
     });
   },
+
 
   addUIControls: function () {
     const container = document.createElement('div');

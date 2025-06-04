@@ -41,14 +41,3 @@ canvas {
   z-index: 9999;
   border-radius: 6px;
 }
-
-#ui-container {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 999;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 8px;
-  border-radius: 4px;
-  font-family: sans-serif;
-}

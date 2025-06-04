@@ -12,15 +12,10 @@
     <body>
 
         <div id="coordsBox">Loading...</div>
+        <div id="textBox"></div>
 
         <a-scene>
-        <a-assets id="asset-container">
-            <!--
-            <img id="point1" src="resources/images/House/point1 small.jpg">
-            <img id="point2" src="resources/images/House/point2 small.jpg">
-            <img id="point3" src="resources/images/House/point3 small.jpg">
-            -->
-        </a-assets>
+        <a-assets id="asset-container"></a-assets>
 
         <a-sky id="sky"></a-sky>
 
@@ -30,7 +25,7 @@
             <a-entity id="cameraRig" id="camera" camera inverted-look-controls position="0 1.6 0">
                 <a-entity id="cam"           
                 cursor="rayOrigin: mouse"
-                raycaster="objects: .clickable"
+                raycaster="objects: .clickable, .hoverable"
                 position="0 0 -1"
                 geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
                 material="color: white; shader: flat">  
@@ -49,5 +44,6 @@
         <script src="js/controller.js"></script>
         <script src="js/roomManager.js"></script>
         <script src="js/coordinates.js"></script>
+        <script src="js/textManager.js"></script>
     </body>
 </html>

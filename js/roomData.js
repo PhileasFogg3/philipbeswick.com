@@ -11,7 +11,14 @@ const rooms = {
         iconRotation: '90 0 0',
         position: [-413.31, -232.81, 156.52],
         targetRoom: 'room2',
-        label: 'Go to Room 2'
+        info: 'Go to Room 2'
+      },
+      {
+        icon: 'resources/images/icon/360 project/info.png',
+        iconRotation: '0 90 0',
+        position: [-255.14, 318.62, 288.10],
+        info: 'Test text',
+        infoRotation: '0 90 0'
       }
     ]
   },
@@ -27,14 +34,14 @@ const rooms = {
         iconRotation: '-90 0 0',
         position: [360.32, -306.50, 160.57],
         targetRoom: 'room1',
-        label: 'Back to Room 1'
+        info: 'Back to Room 1'
       },
       {
         icon: 'resources/images/icon/360 project/arrow.png',
         iconRotation: '90 0 0',
         position: [-388.99, -229.34, -213.92],
         targetRoom: 'room3',
-        label: 'Go to Room 3'
+        info: 'Go to Room 3'
       }
     ]
   },
@@ -50,7 +57,7 @@ const rooms = {
         iconRotation: '-90 0 0',
         position: [421.15, -228.36, -141.25],
         targetRoom: 'room2',
-        label: 'Back to Room 2'
+        info: 'Back to Room 2'
       }
     ]
   }
