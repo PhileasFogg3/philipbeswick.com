@@ -58,7 +58,7 @@ const rooms = {
         iconWidth: '100',
         position: [-440, 133.62, 193.71],
         info: 'Click me to get a close up.',
-        image: 'resources/images/images/L Beswick wolves.jpg',
+        image: 'resources/images/images/L Beswick Wolves.jpg',
         shouldBounce: true
       }
     ]
