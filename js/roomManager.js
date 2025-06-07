@@ -87,11 +87,18 @@ function loadRoom(roomId) {
     el.setAttribute('rotation', hotspot.iconRotation);
     el.setAttribute('depth-test', 'false');
 
-        if (hotspot.targetRoom) {
+        if (hotspot.image || hotspot.targetRoom) {
             el.classList.add('clickable')
             el.setAttribute('event-set__enter', '_event: mouseenter; scale: 1.3 1.3 1');
             el.setAttribute('event-set__leave', '_event: mouseleave; scale: 1 1 1');
+        }
+
+        if (hotspot.targetRoom) {
             el.addEventListener('click', () => loadRoom(hotspot.targetRoom));
+        }
+
+        if (hotspot.image) {
+            el.addEventListener('click', () => loadImage(hotspot.image));
         }
 
         if (hotspot.info) {

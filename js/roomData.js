@@ -50,6 +50,16 @@ const rooms = {
         position: [-388.99, -229.34, -213.92],
         targetRoom: 'room3',
         info: 'Go on then... check out the front door.'
+      },
+      {
+        icon: 'resources/images/icon/360 project/picture.png',
+        iconRotation: '0 80 0',
+        iconHeight: '100',
+        iconWidth: '100',
+        position: [-440, 133.62, 193.71],
+        info: 'Click me to get a close up.',
+        image: 'resources/images/images/L Beswick wolves.jpg',
+        shouldBounce: true
       }
     ]
   },
