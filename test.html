@@ -13,6 +13,10 @@
 
         <div id="coordsBox">Loading...</div>
         <div id="textBox"></div>
+        <div id="imageBox" class="image-box">
+            <span class="close-icon" onclick="closeImageBox()">&times;</span>
+            <img id="loadedImage" src="" alt="Loaded Image">
+        </div>
 
         <a-scene>
         <a-assets id="asset-container"></a-assets>
@@ -45,5 +49,6 @@
         <script src="js/roomManager.js"></script>
         <script src="js/coordinates.js"></script>
         <script src="js/textManager.js"></script>
+        <script src="js/imageManager.js"></script>
     </body>
 </html>
