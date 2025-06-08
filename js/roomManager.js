@@ -98,7 +98,7 @@ function loadRoom(roomId) {
         }
 
         if (hotspot.image) {
-            el.addEventListener('click', () => loadImage(hotspot.image));
+            el.addEventListener('click', () => loadImage(hotspot.image, hotspot.imageCaption));
         }
 
         if (hotspot.info) {

@@ -54,11 +54,12 @@ const rooms = {
       {
         icon: 'resources/images/icon/360 project/picture.png',
         iconRotation: '0 80 0',
-        iconHeight: '100',
-        iconWidth: '100',
+        iconHeight: '50',
+        iconWidth: '50',
         position: [-440, 133.62, 193.71],
         info: 'Click me to get a close up.',
         image: 'resources/images/images/L Beswick Wolves.jpg',
+        imageCaption: 'This is a painting by L Beswick (unknown date).',
         shouldBounce: true
       }
     ]
