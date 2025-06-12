@@ -13,6 +13,7 @@ AFRAME.registerComponent('inverted-look-controls', {
     this.lastX = 0;
     this.lastY = 0;
     this.deviceOrientationControls = null;
+    this._eventsAttached = false;
 
     this.bindMethods();
     this.addEventListeners();
@@ -22,6 +23,25 @@ AFRAME.registerComponent('inverted-look-controls', {
     });
 
     this.addUIControls();
+
+    const settingsButton = document.getElementById('settingsButton');
+    this.settingsPanel = document.getElementById('settingsPanel');
+
+    if (settingsButton && this.settingsPanel) {
+      this.settingsPanel.style.display = 'none';
+      settingsButton.addEventListener('click', () => {
+        this.settingsPanel.style.display =
+          this.settingsPanel.style.display === 'none' ? 'flex' : 'none';
+      });
+    }
+  },
+
+  update: function () {
+    if (this.data.enabled) {
+      this.addEventListeners();
+    } else {
+      this.removeEventListeners();
+    }
   },
 
   bindMethods: function () {
@@ -41,6 +61,9 @@ AFRAME.registerComponent('inverted-look-controls', {
       return;
     }
 
+    if (this._eventsAttached) return;
+    this._eventsAttached = true;
+
     canvas.style.cursor = 'grab';
 
     canvas.addEventListener('mousedown', this.onMouseDown);
@@ -56,6 +79,20 @@ AFRAME.registerComponent('inverted-look-controls', {
         canvas.style.cursor = 'default';
       }
     });
+  },
+
+  removeEventListeners: function () {
+    const canvas = this.el.sceneEl.canvas;
+    if (!canvas || !this._eventsAttached) return;
+    this._eventsAttached = false;
+
+    canvas.removeEventListener('mousedown', this.onMouseDown);
+    window.removeEventListener('mousemove', this.onMouseMove);
+    window.removeEventListener('mouseup', this.onMouseUp);
+
+    canvas.removeEventListener('touchstart', this.onTouchStart);
+    canvas.removeEventListener('touchmove', this.onTouchMove);
+    window.removeEventListener('touchend', this.onTouchEnd);
   },
 
   addInteractiveCursorListeners: function () {
@@ -83,52 +120,66 @@ AFRAME.registerComponent('inverted-look-controls', {
     });
   },
 
-
   addUIControls: function () {
     const container = document.createElement('div');
-    container.style.position = 'absolute';
-    container.style.top = '10px';
-    container.style.right = '10px';
+    container.id = 'settingsPanel';
+    container.style.display = 'none';
+    container.style.flexDirection = 'column';    // stack vertically
+    container.style.flexWrap = 'wrap';            // wrap if needed
+    container.style.gap = '12px';
     container.style.padding = '8px';
     container.style.background = 'rgba(0,0,0,0.6)';
     container.style.color = '#fff';
-    container.style.zIndex = '999';
+    container.style.zIndex = '1000';
+    container.style.borderRadius = '8px';
+    container.style.minWidth = '200px';
+    container.style.position = 'fixed';
+    container.style.top = '80px';   // some distance from top of viewport
+    container.style.right = '10px'; // near right edge, or left if you prefer
+    container.style.maxHeight = 'calc(100vh - 100px)'; // max height so it doesn’t go off bottom
+    container.style.overflowY = 'auto'; // scroll if too tall
+    container.style.boxSizing = 'border-box'; // padding included in size
+
+
+
+    // Helper to create a checkbox with label wrapped in a flex container
+    function createCheckbox(id, labelText, checked, onChange) {
+      const wrapper = document.createElement('div');
+      wrapper.style.display = 'flex';
+      wrapper.style.alignItems = 'center';
+      wrapper.style.gap = '6px';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = id;
+      checkbox.checked = checked;
+      checkbox.addEventListener('change', onChange);
+
+      const label = document.createElement('label');
+      label.htmlFor = id;
+      label.textContent = labelText;
+
+      wrapper.appendChild(checkbox);
+      wrapper.appendChild(label);
+
+      return wrapper;
+    }
 
     // Invert X checkbox
-    const invertX = document.createElement('input');
-    invertX.type = 'checkbox';
-    invertX.id = 'invertX';
-    invertX.checked = this.data.invertX;
-    invertX.addEventListener('change', () => {
-      this.data.invertX = invertX.checked;
-    });
-    const labelX = document.createElement('label');
-    labelX.htmlFor = 'invertX';
-    labelX.textContent = 'Invert X';
-    labelX.style.marginRight = '10px';
+    container.appendChild(createCheckbox('invertX', 'Invert X', this.data.invertX, (e) => {
+      this.data.invertX = e.target.checked;
+    }));
 
     // Invert Y checkbox
-    const invertY = document.createElement('input');
-    invertY.type = 'checkbox';
-    invertY.id = 'invertY';
-    invertY.checked = this.data.invertY;
-    invertY.addEventListener('change', () => {
-      this.data.invertY = invertY.checked;
-    });
-    const labelY = document.createElement('label');
-    labelY.htmlFor = 'invertY';
-    labelY.textContent = 'Invert Y';
-    labelY.style.marginRight = '10px';
+    container.appendChild(createCheckbox('invertY', 'Invert Y', this.data.invertY, (e) => {
+      this.data.invertY = e.target.checked;
+    }));
 
-    // Gyroscope checkbox
-    const gyroCheckbox = document.createElement('input');
-    gyroCheckbox.type = 'checkbox';
-    gyroCheckbox.id = 'gyroToggle';
-    gyroCheckbox.checked = this.data.gyroscopeEnabled;
-    gyroCheckbox.addEventListener('change', () => {
-      this.data.gyroscopeEnabled = gyroCheckbox.checked;
+    // Gyroscope toggle checkbox
+    container.appendChild(createCheckbox('gyroToggle', 'Enable Gyroscope', this.data.gyroscopeEnabled, (e) => {
+      this.data.gyroscopeEnabled = e.target.checked;
 
-      if (gyroCheckbox.checked) {
+      if (e.target.checked) {
         console.log('[Gyro] Enabling THREE.DeviceOrientationControls');
         this.deviceOrientationControls = new THREE.DeviceOrientationControls(this.el.object3D);
         this.deviceOrientationControls.connect();
@@ -139,20 +190,10 @@ AFRAME.registerComponent('inverted-look-controls', {
           this.deviceOrientationControls = null;
         }
       }
-    });
-    const labelGyro = document.createElement('label');
-    labelGyro.htmlFor = 'gyroToggle';
-    labelGyro.textContent = 'Enable Gyroscope';
+    }));
 
-    // Append all to container
-    container.appendChild(invertX);
-    container.appendChild(labelX);
-    container.appendChild(invertY);
-    container.appendChild(labelY);
-    container.appendChild(gyroCheckbox);
-    container.appendChild(labelGyro);
-
-    document.body.appendChild(container);
+    // Append the container to wherever it should go in your DOM
+    document.getElementById('settingsPlace').appendChild(container);
   },
 
   onMouseDown: function (e) {
@@ -216,7 +257,6 @@ AFRAME.registerComponent('inverted-look-controls', {
     this.el.object3D.rotation.y += (invertX ? -1 : 1) * dx * sensitivity;
     this.el.object3D.rotation.x += (invertY ? -1 : 1) * dy * sensitivity;
 
-    // Clamp vertical rotation so no flipping over
     this.el.object3D.rotation.x = Math.max(
       -Math.PI / 2,
       Math.min(Math.PI / 2, this.el.object3D.rotation.x)
@@ -229,3 +269,48 @@ AFRAME.registerComponent('inverted-look-controls', {
     }
   }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+  const welcomeBox = document.getElementById("welcomeBox");
+  const cameraEl = document.getElementById("cameraRig");
+
+  function waitForScene(callback) {
+    const scene = document.querySelector('a-scene');
+    if (scene && scene.hasLoaded) {
+      callback(scene);
+    } else if (scene) {
+      scene.addEventListener('loaded', () => callback(scene));
+    } else {
+      setTimeout(() => waitForScene(callback), 100);
+    }
+  }
+
+  waitForScene(() => {
+    // Poll until component is initialized
+    const checkComponent = setInterval(() => {
+      if (cameraEl && cameraEl.components['inverted-look-controls']) {
+        clearInterval(checkComponent);
+
+        // Disable look controls
+        cameraEl.setAttribute('inverted-look-controls', 'enabled', false);
+
+        // Show welcome box
+        if (welcomeBox) {
+          welcomeBox.style.display = "block";
+        }
+      }
+    }, 100);
+  });
+});
+
+function closeWelcomeBox() {
+  const welcomeBox = document.getElementById('welcomeBox');
+  const cameraEl = document.getElementById('cameraRig');
+
+  if (welcomeBox) {
+    welcomeBox.style.display = 'none';
+    if (cameraEl && cameraEl.components['inverted-look-controls']) {
+      cameraEl.setAttribute('inverted-look-controls', 'enabled', true);
+    }
+  }
+}
