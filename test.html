@@ -11,8 +11,20 @@
 
     <body>
 
+        <div id="welcomeBox" class="welcome-box">
+            <span class="close-icon" onclick="closeWelcomeBox()">&times;</span>
+            <div id="hero"></div>
+            <img id="backgroundImage" alt=""/>
+            <div id="welcomeText"></div>
+        </div>
+
+        <div id="settingsPlace" class="settings-place">
+            <div id="settingsButton" class="settings-button"></div>
+        </div>
+        
         <div id="coordsBox">Loading...</div>
         <div id="textBox"></div>
+
         <div id="imageBox" class="image-box">
             <span class="close-icon" onclick="closeImageBox()">&times;</span>
             <img id="loadedImage" src="" alt="">
@@ -27,7 +39,7 @@
         <!-- Hotspots container -->
         <a-image id="hotspot-container"></a-image>
 
-            <a-entity id="cameraRig" id="camera" camera inverted-look-controls position="0 1.6 0">
+            <a-entity id="cameraRig" camera inverted-look-controls position="0 1.6 0">
                 <a-entity id="cam"           
                 cursor="rayOrigin: mouse"
                 raycaster="objects: .clickable, .hoverable"
@@ -45,6 +57,8 @@
 
         </a-scene>
 
+        <script src="js/welcomeBox/customizeWelcomeBox.js"></script>
+        <script src="js/welcomeBox/welcomeData.js"></script>
         <script src="js/roomData.js"></script>
         <script src="js/controller.js"></script>
         <script src="js/roomManager.js"></script>
