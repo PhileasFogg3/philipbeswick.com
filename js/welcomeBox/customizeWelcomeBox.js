@@ -22,7 +22,7 @@ function customizeWelcomeBox() {
             hero.style.color = heroData.color;
         }
         if (heroData.size) {
-            hero.style.fontSize = `${heroData.size}px`;
+            hero.style.fontSize = `${heroData.size}`;
         }
         if (heroData.font) {
             hero.style.fontFamily = heroData.font;
@@ -42,7 +42,7 @@ function customizeWelcomeBox() {
 
         if (imgData.width) {
             bgImg.style.width = imgData.width;
-            box.style.width = `calc(${imgData.width} + 40px)`; // image width + 40px padding
+            box.style.width = `calc(${imgData.width} + 40vw)`; // image width + 40px padding
         } else {
             bgImg.style.width = 'auto';
             box.style.width = 'auto';
@@ -62,7 +62,7 @@ function customizeWelcomeBox() {
             text.style.color = textData.color;
         }
         if (textData.size) {
-            text.style.fontSize = `${textData.size}px`;
+            text.style.fontSize = `${textData.size}`;
         }
         if (textData.font) {
             text.style.fontFamily = textData.font;

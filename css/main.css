@@ -59,7 +59,7 @@ canvas {
   top: 10px;
   right: 10px;
   cursor: pointer;
-  font-size: 40px;
+  font-size: 30px;
   color: #888;
 }
 
@@ -111,24 +111,37 @@ canvas {
 }
 
 #welcomeBox {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch; /* stretch children to box width */
-  padding: 20px;
-  position: relative;
+  width: 90vw;
+  max-width: 70vw;   /* never exceed viewport width */
+  margin: 0 auto;
+  padding: max(5vw, 10px);
+  box-sizing: border-box;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   text-align: center;
-  max-width: 100vw; /* optional, don't let it overflow viewport */
-  box-sizing: border-box; /* important for padding to be included */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  overflow-x: hidden;
 }
 
-#welcomeBox > div, 
+#welcomeBox > div,
 #welcomeBox > img {
   max-width: 100%;
-  word-wrap: break-word;
-  word-break: break-word;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+#hero {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+}
+
+#welcomeText {
+  font-size: clamp(1rem, 3vw, 1.5rem);
 }
 
 .a-enter-vr, .a-fullscreen-button {
