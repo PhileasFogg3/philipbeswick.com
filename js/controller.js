@@ -297,6 +297,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Show welcome box
         if (welcomeBox) {
           welcomeBox.style.display = "block";
+          if (settingsButton) {
+            settingsButton.style.display = 'none';
+          }
         }
       }
     }, 100);
@@ -306,11 +309,17 @@ document.addEventListener('DOMContentLoaded', function () {
 function closeWelcomeBox() {
   const welcomeBox = document.getElementById('welcomeBox');
   const cameraEl = document.getElementById('cameraRig');
+  const settingsButton = document.getElementById('settingsButton'); // Get the settings button
 
   if (welcomeBox) {
     welcomeBox.style.display = 'none';
     if (cameraEl && cameraEl.components['inverted-look-controls']) {
       cameraEl.setAttribute('inverted-look-controls', 'enabled', true);
+    }
+
+    // Make the settings button visible
+    if (settingsButton) {
+      settingsButton.style.display = 'block';
     }
   }
 }
