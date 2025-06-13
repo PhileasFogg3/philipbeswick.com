@@ -20,7 +20,7 @@ const welcomeInfo = {
             size: '25',
         },
         {
-            text: 'You can navigate this tour by clicking on the white arrows you find on the ground, you can also look around each scene you are in. In addition, you may find several "bounding buttons" around the building; click them for more information.',
+            text: 'You can navigate this tour by clicking on the white arrows you find on the ground, you can also look around each scene you are in. In addition, you may find several "bouncing buttons" around the building; click them for more information.',
             font: '',
             color: 'black',
             size: '25',
