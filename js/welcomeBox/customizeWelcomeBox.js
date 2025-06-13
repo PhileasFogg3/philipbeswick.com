@@ -1,71 +1,65 @@
-document.addEventListener("DOMContentLoaded", () => {
-    customizeWelcomeBox();
-});
+function initWelcomeBox(config) {
+    const backgroundImg = config.backgroundImg?.[0];
+    const hero = config.hero?.[0];
+    const text = config.text?.[0];
+    const attributions = config.attributions?.[0];
 
-function customizeWelcomeBox() {
-    const box = document.getElementById('welcomeBox');
-    const hero = document.getElementById('hero');
-    const text = document.getElementById('welcomeText');
     const bgImg = document.getElementById('backgroundImage');
-    const data = welcomeInfo;
+    const heroDiv = document.getElementById('hero');
+    const textDiv = document.getElementById('welcomeText');
+    const attributionsDiv = document.getElementById('attributions');
 
-    // Clear any old background styles on the box
-    box.style.backgroundImage = 'none';
-    box.style.backgroundColor = '';
+    // Set background image
+    if (backgroundImg?.src) {
+        bgImg.src = backgroundImg.src;
+        bgImg.style.display = 'block';
+    }
 
     // Set hero text
-    if (data.hero && data.hero.length > 0) {
-        const heroData = data.hero[0];
-        hero.innerText = heroData.text || '';
-
-        if (heroData.color) {
-            hero.style.color = heroData.color;
-        }
-        if (heroData.size) {
-            hero.style.fontSize = `${heroData.size}`;
-        }
-        if (heroData.font) {
-            hero.style.fontFamily = heroData.font;
+    if (hero?.text) {
+        heroDiv.textContent = hero.text;
+        heroDiv.style.color = hero.color || 'black';
+        heroDiv.style.fontSize = hero.size ? `${hero.size}px` : '40px';
+        if (hero.font) {
+            heroDiv.style.fontFamily = hero.font;
         }
     }
 
-    // Set image src, height, width
-    if (data.backgroundImg && data.backgroundImg.length > 0) {
-        const imgData = data.backgroundImg[0];
-        bgImg.src = imgData.src || '';
-
-        if (imgData.height) {
-            bgImg.style.height = imgData.height;
-        } else {
-            bgImg.style.height = 'auto';
-        }
-
-        if (imgData.width) {
-            bgImg.style.width = imgData.width;
-            box.style.width = `calc(${imgData.width} + 40vw)`; // image width + 40px padding
-        } else {
-            bgImg.style.width = 'auto';
-            box.style.width = 'auto';
-        }
-    } else {
-        bgImg.style.display = 'none';
-        box.style.width = 'auto';
+    if (Array.isArray(config.text)) {
+        textDiv.innerHTML = ''; // Clear previous content if any
+        config.text.forEach(text => {
+            if (text?.text) {
+                const p = document.createElement('p');
+                p.innerHTML = text.text;
+                p.style.color = text.color || 'black';
+                p.style.fontSize = text.size ? `${text.size}px` : '20px';
+                if (text.font) {
+                    p.style.fontFamily = text.font;
+                }
+                textDiv.appendChild(p);
+            }
+        });
     }
 
-
-    // Set welcome text below image
-    if (data.text && data.text.length > 0) {
-        const textData = data.text[0];
-        text.innerText = textData.text || '';
-
-        if (textData.color) {
-            text.style.color = textData.color;
-        }
-        if (textData.size) {
-            text.style.fontSize = `${textData.size}`;
-        }
-        if (textData.font) {
-            text.style.fontFamily = textData.font;
-        }
+    if (Array.isArray(config.attributions)) {
+        attributionsDiv.innerHTML = ''; // Clear previous content if any
+        config.attributions.forEach(attr => {
+            if (attr?.text) {
+                const p = document.createElement('p');
+                p.innerHTML = attr.text;
+                p.style.color = attr.color || 'black';
+                p.style.fontSize = attr.size ? `${attr.size}px` : '20px';
+                if (attr.font) {
+                    p.style.fontFamily = attr.font;
+                }
+                attributionsDiv.appendChild(p);
+            }
+        });
     }
 }
+
+function closeWelcomeBox() {
+    document.getElementById('welcomeBox').style.display = 'none';
+}
+
+window.onload = () => initWelcomeBox(welcomeInfo);
