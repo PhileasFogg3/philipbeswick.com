@@ -75,17 +75,48 @@ function loadRoom(roomId) {
         container.removeChild(container.firstChild);
     }
 
+    const welcomeBox = document.getElementById('welcomeBox');
+
+    if (welcomeBox.style.display == 'none') {
+
+        createHotspot(room, container);
+        
+    }
+}
+
+function getHotspotPosition(hotspot, room) {
+    const pos = Array.isArray(hotspot.position)
+        ? new THREE.Vector3(...hotspot.position)
+        : new THREE.Vector3(...hotspot.position.split(' ').map(parseFloat));
+
+    const roomRot = room.rotation || [0, 0, 0];
+    const euler = new THREE.Euler(
+        THREE.MathUtils.degToRad(roomRot[0]),
+        THREE.MathUtils.degToRad(roomRot[1]),
+        THREE.MathUtils.degToRad(roomRot[2]),
+        'YXZ' // A-Frame default
+    );
+
+    pos.applyEuler(euler);
+
+    console.log('Hotspot magnitude:', pos.length());
+
+    return pos;
+}
+
+function createHotspot(room, container) {
+
     // Add new hotspots for the new room
     room.hotspots.forEach(hotspot => {
-    const position = getHotspotPosition(hotspot, room); 
-    const el = document.createElement('a-image');
-    el.setAttribute('src', hotspot.icon);
-    el.setAttribute('width', hotspot.iconWidth);
-    el.setAttribute('height', hotspot.iconHeight);
-    el.setAttribute('position', position);
-    el.setAttribute('look-at', '#camera');
-    el.setAttribute('rotation', hotspot.iconRotation);
-    el.setAttribute('depth-test', 'false');
+        const position = getHotspotPosition(hotspot, room); 
+        const el = document.createElement('a-image');
+        el.setAttribute('src', hotspot.icon);
+        el.setAttribute('width', hotspot.iconWidth);
+        el.setAttribute('height', hotspot.iconHeight);
+        el.setAttribute('position', position);
+        el.setAttribute('look-at', '#camera');
+        el.setAttribute('rotation', hotspot.iconRotation);
+        el.setAttribute('depth-test', 'false');
 
         if (hotspot.image || hotspot.targetRoom) {
             el.classList.add('clickable')
@@ -128,24 +159,4 @@ function loadRoom(roomId) {
         console.log(`Added hotspot${hotspot.targetRoom ? ` to ${hotspot.targetRoom}` : ''}`);
         console.log(el.classList);
     });
-}
-
-function getHotspotPosition(hotspot, room) {
-    const pos = Array.isArray(hotspot.position)
-        ? new THREE.Vector3(...hotspot.position)
-        : new THREE.Vector3(...hotspot.position.split(' ').map(parseFloat));
-
-    const roomRot = room.rotation || [0, 0, 0];
-    const euler = new THREE.Euler(
-        THREE.MathUtils.degToRad(roomRot[0]),
-        THREE.MathUtils.degToRad(roomRot[1]),
-        THREE.MathUtils.degToRad(roomRot[2]),
-        'YXZ' // A-Frame default
-    );
-
-    pos.applyEuler(euler);
-
-    console.log('Hotspot magnitude:', pos.length());
-
-    return pos;
 }

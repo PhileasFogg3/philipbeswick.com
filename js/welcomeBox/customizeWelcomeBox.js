@@ -58,8 +58,37 @@ function initWelcomeBox(config) {
     }
 }
 
-function closeWelcomeBox() {
-    document.getElementById('welcomeBox').style.display = 'none';
-}
+window.onload = () => {
+    initWelcomeBox(welcomeInfo);
 
-window.onload = () => initWelcomeBox(welcomeInfo);
+    const closeIcon = document.querySelector('.close-icon');
+    if (closeIcon) {
+        closeIcon.addEventListener('click', () => {
+            closeWelcomeBox();
+        });
+    }
+};
+
+function closeWelcomeBox() {
+  const welcomeBox = document.getElementById('welcomeBox');
+  const cameraEl = document.getElementById('cameraRig');
+  const settingsButton = document.getElementById('settingsButton'); // Get the settings button
+
+  if (welcomeBox) {
+    welcomeBox.style.display = 'none';
+    if (cameraEl && cameraEl.components['inverted-look-controls']) {
+      cameraEl.setAttribute('inverted-look-controls', 'enabled', true);
+    }
+
+    // Make the settings button visible
+    if (settingsButton) {
+      settingsButton.style.display = 'block';
+    }
+  }
+
+  currentRoom = Object.keys(rooms).find(key => rooms[key].firstRoom) || 'room1';
+  const room = rooms[currentRoom];
+  const container = document.getElementById('hotspot-container');
+  createHotspot(room, container);
+
+}

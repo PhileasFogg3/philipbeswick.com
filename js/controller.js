@@ -305,21 +305,3 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 100);
   });
 });
-
-function closeWelcomeBox() {
-  const welcomeBox = document.getElementById('welcomeBox');
-  const cameraEl = document.getElementById('cameraRig');
-  const settingsButton = document.getElementById('settingsButton'); // Get the settings button
-
-  if (welcomeBox) {
-    welcomeBox.style.display = 'none';
-    if (cameraEl && cameraEl.components['inverted-look-controls']) {
-      cameraEl.setAttribute('inverted-look-controls', 'enabled', true);
-    }
-
-    // Make the settings button visible
-    if (settingsButton) {
-      settingsButton.style.display = 'block';
-    }
-  }
-}
