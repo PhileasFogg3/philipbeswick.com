@@ -3,7 +3,7 @@ AFRAME.registerComponent('inverted-look-controls', {
     enabled: { default: true },
     invertX: { default: false },
     invertY: { default: false },
-    sensitivity: { default: 0.002 },
+    sensitivity: { default: 0.003 },
     gyroscopeEnabled: { default: false }
   },
 
